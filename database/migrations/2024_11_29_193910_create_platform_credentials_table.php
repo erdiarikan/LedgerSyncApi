@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Platform;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +14,10 @@ return new class extends Migration {
             $table->text('id_token')->nullable();
             $table->text('access_token');
             $table->timestamp('access_token_created_at');
-            $table->timestamp('access_token_expire_at');
-            $table->text('refresh_token')->nullable();
-            $table->timestamp('refresh_token_created_at')->nullable();
-            $table->timestamp('refresh_token_expire_at')->nullable();
+            $table->timestamp('access_token_expires_at');
+            $table->text('refresh_token');
+            $table->timestamp('refresh_token_created_at');
+            $table->timestamp('refresh_token_expires_at')->nullable();
             $table->text('scope')->nullable();
             $table->timestamps();
             $table->softDeletes();

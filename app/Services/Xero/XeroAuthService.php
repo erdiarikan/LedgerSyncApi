@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-namespace App\Services;
+namespace App\Services\Xero;
 
-use App\Exceptions\XeroAuthException;
+use App\Exceptions\XeroApiException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\Log;
 class XeroAuthService
 {
     /**
-     * @throws XeroAuthException
+     * @throws XeroApiException
      * @throws ConnectionException
      */
-    public function exchangeCodeForToken(string $code): string
+    public function exchangeCodeForToken(string $code): array
     {
         $clientId = config('xero.client_id');
         $clientSecret = config('xero.client_secret');
@@ -35,9 +35,9 @@ class XeroAuthService
             Log::error('Failed to exchange authorization code for access token.', [
                 'response' => $response->body(),
             ]);
-            throw new XeroAuthException('Failed to exchange authorization code for access token.');
+            throw new XeroApiException('Failed to exchange authorization code for access token.');
         }
 
-        return $response->json('access_token');
+        return $response->json();
     }
 }

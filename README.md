@@ -40,7 +40,7 @@ Follow these steps to set up the project locally:
     *   Update the `.env` file with your database credentials, Xero API keys, and other necessary configurations.
 4.  **Run migrations:**
 
-        php artisan migrate
+        ./migrate_fresh.sh
 
 5.  **Start the development server:**
 

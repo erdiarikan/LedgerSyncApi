@@ -3,19 +3,15 @@
 namespace App\Services\Platform;
 
 use App\Contracts\Platform\AssignPlatformTenantToCompanyService;
-use App\Enums\PlatformEnum;
 use App\Models\Company;
 use App\Models\PlatformCredential;
 use Illuminate\Http\JsonResponse;
 
-class AssignTenantToCompanyService implements AssignPlatformTenantToCompanyService
+readonly class AssignTenantToCompanyService implements AssignPlatformTenantToCompanyService
 {
-    private SavePlatformTenantService $platformTenantService;
-
     public function __construct(
-        SavePlatformTenantService $platformTenantService,
+        private SavePlatformTenantService $platformTenantService,
     ) {
-        $this->platformTenantService = $platformTenantService;
     }
 
     public function assignTenantToCompany(
@@ -23,31 +19,53 @@ class AssignTenantToCompanyService implements AssignPlatformTenantToCompanyServi
         Company $company,
         PlatformCredential $platformCredential
     ): JsonResponse {
-        if (empty($platformTenants)) {
-            return response()->json([
+        $statusCode = 200;
+
+        $response = match (true) {
+            empty($platformTenants) => [
                 'success' => false,
                 'message' => 'No Organisation is found.',
-            ], 500);
+                'status' => 500,
+            ],
+//            count($platformTenants) > 1 => [
+//                'success' => false,
+//                'message' => 'Multiple organisations found, please select one.',
+//                'organisations' => $platformTenants,
+//                'status' => 400,
+//            ],
+            count($platformTenants) > 1 =>
+                $this->processSingleTenant($platformTenants[1], $company, $platformCredential),
+
+            default => $this->processSingleTenant($platformTenants[0], $company, $platformCredential)
+        };
+
+        $statusCode = $response['status'] ?? $statusCode;
+        unset($response['status']);
+
+        return response()->json($response, $statusCode);
+    }
+
+    private function processSingleTenant(
+        $platformTenantData,
+        Company $company,
+        PlatformCredential $platformCredential
+    ): array {
+        $tenant = $this->platformTenantService->savePlatformTenant($platformTenantData, $platformCredential);
+
+        if ($company->platformTenants()->where('platform_tenant_id', $tenant->id)->exists()) {
+            return [
+                'success' => false,
+                'message' => 'The tenant is already assigned to this company.',
+                'status' => 400,
+            ];
         }
 
-        if (count($platformTenants) === 1) {
-            $tenant = $this->platformTenantService->savePlatformTenant(
-                $platformTenants[0],
-                $platformCredential
-            );
+        $company->platformTenants()->attach($tenant);
 
-            $company->platformTenants()->attach($tenant);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Organisation is attached to the tenant',
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Multiple organisations found, please select one.',
-            'organisations' => $platformTenants,
-        ]);
+        return [
+            'success' => true,
+            'message' => 'The tenant is successfully assigned to the company.',
+            'status' => 200,
+        ];
     }
 }

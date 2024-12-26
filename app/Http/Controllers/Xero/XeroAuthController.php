@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Xero;
 
 use App\Contracts\Platform\PlatformAuthService;
 use App\Contracts\Platform\PlatformTenantService;
-use App\Enums\PlatformEnum;
+use App\Enums\PlatformsEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\XeroCallbackRequest;
 use App\Models\Company;
@@ -39,7 +39,7 @@ class XeroAuthController extends Controller
             $accessToken = $this->platformAuthService->exchangeCodeForToken($validated['code']);
             $platformCredential = $this->savePlatformCredentialsService->savePlatformCredentials(
                 $accessToken,
-                PlatformEnum::XERO
+                PlatformsEnum::XERO
             );
             $platformTenants = $this->platformTenantService->fetchOrganisations($accessToken->accessToken);
 

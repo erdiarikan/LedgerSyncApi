@@ -3,6 +3,7 @@
 namespace App\DTOs;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class PlatformAccessTokenDTO
 {
@@ -20,12 +21,12 @@ class PlatformAccessTokenDTO
     public function __construct(array $data)
     {
         $this->idToken = $data['idToken'] ?? null;
-        $this->accessToken = $data['accessToken'] ?? throw new \InvalidArgumentException('AccessToken is required.');
+        $this->accessToken = $data['accessToken'] ?? throw new InvalidArgumentException('AccessToken is required.');
         $this->accessTokenCreatedAt = Carbon::now();
         $this->accessTokenExpiresAt = $data['accessTokenExpiresIn'] ?
             Carbon::now()->addSeconds($data['accessTokenExpiresIn']) :
-            throw new \InvalidArgumentException('AccessTokenExpiresIn is required.');
-        $this->refreshToken = $data['refreshToken'] ?? throw new \InvalidArgumentException('RefreshToken is required.');
+            throw new InvalidArgumentException('AccessTokenExpiresIn is required.');
+        $this->refreshToken = $data['refreshToken'] ?? throw new InvalidArgumentException('RefreshToken is required.');
         $this->refreshTokenCreatedAt = Carbon::now();
         $this->refreshTokenExpiresAt = $data['refreshTokenExpiresIn'] ?
             Carbon::now()->addSeconds($data['refreshTokenExpiresIn']) : null;

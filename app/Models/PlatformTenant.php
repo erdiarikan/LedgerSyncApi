@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -45,5 +46,10 @@ class PlatformTenant extends Model implements Auditable
     {
         return $this->belongsToMany(Company::class, 'company_platform_tenant', 'platform_tenant_id', 'company_uuid')
             ->withTimestamps();
+    }
+
+    public function contacts(): MorphMany
+    {
+        return $this->morphMany(Contact::class, 'contactable');
     }
 }

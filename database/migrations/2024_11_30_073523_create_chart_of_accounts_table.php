@@ -10,12 +10,14 @@ return new class extends Migration {
     {
         Schema::create('chart_of_accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('external_id');
             $table->foreignIdFor(PlatformTenant::class, 'platform_tenant_id')->constrained()->cascadeOnDelete();
+            $table->string('external_id');
             $table->string('code')->nullable();
             $table->string('name')->nullable();
             $table->string('status')->nullable();
+            $table->string('account_type')->nullable();
             $table->string('tax_type')->nullable();
+            $table->text('description')->nullable();
             $table->string('class')->nullable();
             $table->string('system_account')->nullable();
             $table->boolean('enable_payment_to_account')->nullable();

@@ -3,6 +3,7 @@
 namespace App\DTOs;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class PlatformTenantDTO
 {
@@ -19,9 +20,9 @@ class PlatformTenantDTO
     public function __construct(array $data)
     {
         $this->authEventId = $data['authEventId'] ?? null;
-        $this->tenantId = $data['tenantId'] ?? throw new \InvalidArgumentException('tenantId is required.');
+        $this->tenantId = $data['tenantId'] ?? throw new InvalidArgumentException('tenantId is required.');
         $this->tenantType = $data['tenantType'] ?? null;
-        $this->tenantName = $data['tenantName'] ?? throw new \InvalidArgumentException('tenantName is required.');
+        $this->tenantName = $data['tenantName'] ?? throw new InvalidArgumentException('tenantName is required.');
         $this->tenantCreatedAt = $data['createdDateUtc'] ? Carbon::parse($data['createdDateUtc']) : null;
         $this->tenantUpdatedAt = $data['updatedDateUtc'] ? Carbon::parse($data['updatedDateUtc']) : null;
     }

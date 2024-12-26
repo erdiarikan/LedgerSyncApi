@@ -6,7 +6,6 @@ use App\Adapters\Xero\XeroAuthServiceAdapter;
 use App\Adapters\Xero\XeroTenantServiceAdapter;
 use App\Contracts\Platform\PlatformAuthService;
 use App\Contracts\Platform\PlatformTenantService;
-use App\Services\Platform\AssignTenantToCompanyService;
 use App\Services\Xero\XeroAuthService;
 use App\Services\Xero\XeroTenantService;
 use Illuminate\Support\ServiceProvider;

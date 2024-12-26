@@ -41,4 +41,9 @@ class PlatformCredential extends Model
     {
         return $this->hasOne(PlatformTenant::class, 'company_uuid', 'uuid');
     }
+
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
+    }
 }

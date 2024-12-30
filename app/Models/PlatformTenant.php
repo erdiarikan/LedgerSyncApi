@@ -21,9 +21,9 @@ class PlatformTenant extends Model implements Auditable
         'platform_credential_id',
         'company_uuid',
         'auth_event_id',
-        'tenant_id',
+        'platform_id',
         'tenant_type',
-        'tenant_name',
+        'name',
         'tenant_created_at',
         'tenant_updated_at',
     ];

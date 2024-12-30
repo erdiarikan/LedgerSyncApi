@@ -2,10 +2,9 @@
 
 namespace App\Traits;
 
-use App\DTOs\PlatformRetryAtDTO;
+use App\DTOs\Platform\PlatformRetryAtDTO;
 use App\Models\PlatformTenant;
 use Cache;
-use Carbon\Carbon;
 
 trait CachesPlatformApiRateLimits
 {

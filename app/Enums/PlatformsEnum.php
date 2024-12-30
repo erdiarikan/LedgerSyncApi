@@ -2,14 +2,14 @@
 
 namespace App\Enums;
 
-enum PlatformsEnum: int
+enum PlatformsEnum: string
 {
-    case XERO = 1;
+    case XERO = 'xero';
 
-    public function apiBaseUrl(): string
+    public function getPlatformId(): int
     {
-        return match ($this->value) {
-            self::XERO->value => config('xero.api_base_url'),
+        return match ($this) {
+            self::XERO => 1,
         };
     }
 }

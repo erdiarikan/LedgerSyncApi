@@ -3,7 +3,8 @@
 namespace App\Adapters\Xero;
 
 use App\Contracts\Platform\PlatformTenantService;
-use App\DTOs\PlatformTenantDTO;
+use App\DTOs\Platform\PlatformApiResponseDTO;
+use App\DTOs\Platform\PlatformTenantDTO;
 use App\Exceptions\XeroApiException;
 use App\Helpers\DTOArrayValidator;
 use App\Services\Xero\XeroTenantService;
@@ -22,9 +23,33 @@ class XeroTenantServiceAdapter implements PlatformTenantService
      * @throws XeroApiException
      * @throws ConnectionException
      */
-    public function fetchOrganisations(string $accessToken): array
+    public function fetchTenants(string $accessToken): PlatformApiResponseDTO
     {
-        $organisations = $this->xeroTenantService->fetchOrganisations($accessToken);
+        $fetchOrganisationsData = $this->xeroTenantService->fetchTenants($accessToken);
+        $organisations = $fetchOrganisationsData->data;
+
+        if (is_null($organisations)) {
+            throw new XeroApiException('Retry at ' . $fetchOrganisationsData->retryAt);
+        }
+
+        if (!DTOArrayValidator::validate($organisations, PlatformTenantDTO::class)) {
+            throw new XeroApiException('Invalid organisation data.');
+        }
+
+        return $organisations;
+    }
+
+    /**
+     * @throws XeroApiException
+     */
+    public function fetchOrganisation(string $accessToken): PlatformApiResponseDTO
+    {
+        $fetchOrganisationsData = $this->xeroTenantService->fetchOrganisation($accessToken);
+        $organisations = $fetchOrganisationsData->data;
+
+        if (is_null($organisations)) {
+            throw new XeroApiException('Retry at ' . $fetchOrganisationsData->retryAt);
+        }
 
         if (!DTOArrayValidator::validate($organisations, PlatformTenantDTO::class)) {
             throw new XeroApiException('Invalid organisation data.');

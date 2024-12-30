@@ -1,54 +1,64 @@
 <?php
 
-namespace App\Http\Controllers\Xero;
+namespace App\Http\Controllers;
 
 use App\Contracts\Platform\PlatformAuthService;
 use App\Contracts\Platform\PlatformTenantService;
-use App\Enums\PlatformsEnum;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\PlatformOauth2CallbackRequest;
 use App\Models\Company;
 use App\Services\Platform\AssignTenantToCompanyService;
 use App\Services\Platform\SavePlatformCredentialsService;
+use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
-class XeroAuthController extends Controller
+class PlatformAuthController extends Controller
 {
-    private PlatformAuthService $platformAuthService;
     private SavePlatformCredentialsService $savePlatformCredentialsService;
-    private PlatformTenantService $platformTenantService;
     private AssignTenantToCompanyService $assignTenantToCompanyService;
 
     public function __construct(
-        PlatformAuthService $platformAuthService,
         SavePlatformCredentialsService $savePlatformCredentialsService,
-        PlatformTenantService $platformTenantService,
         AssignTenantToCompanyService $assignTenantToCompanyService
     ) {
-        $this->platformAuthService = $platformAuthService;
         $this->savePlatformCredentialsService = $savePlatformCredentialsService;
-        $this->platformTenantService = $platformTenantService;
         $this->assignTenantToCompanyService = $assignTenantToCompanyService;
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function __invoke(PlatformOauth2CallbackRequest $request)
     {
         $validated = $request->validated();
+
+        $platform = $request->input('platform');
+
+        $platformAuthService = app()->makeWith(PlatformAuthService::class, [
+            'platform' => $platform,
+        ]);
+
+        // If the platform is not Xero, there might be a need to handle it differently.
         $company = Company::where('uuid', $validated['state'])->firstOrFail();
 
         try {
-            $accessToken = $this->platformAuthService->exchangeCodeForToken($validated['code']);
+            $accessToken = $platformAuthService->exchangeCodeForToken($validated['code']);
             $platformCredential = $this->savePlatformCredentialsService->savePlatformCredentials(
                 $accessToken,
-                PlatformsEnum::XERO
+                config("platforms.$platform.enum")
             );
-            $platformTenants = $this->platformTenantService->fetchOrganisations($accessToken->accessToken);
+
+            $platformTenantService = app()->makeWith(PlatformTenantService::class, [
+                'platform' => $platform,
+            ]);
+
+            $platformTenants = $platformTenantService->fetchTenants($accessToken->accessToken)->data;
 
             return $this->assignTenantToCompanyService->assignTenantToCompany(
                 $platformTenants,
                 $company,
                 $platformCredential
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

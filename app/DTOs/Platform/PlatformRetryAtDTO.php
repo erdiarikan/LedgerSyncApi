@@ -1,11 +1,11 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\Platform;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
 
-class PlatformRetryAtDTO
+readonly class PlatformRetryAtDTO
 {
     public int $retryAt;
 

@@ -3,7 +3,7 @@
 namespace App\Adapters\Xero;
 
 use App\Contracts\Platform\PlatformAuthService;
-use App\DTOs\PlatformAccessTokenDTO;
+use App\DTOs\Platform\PlatformAccessTokenDTO;
 use App\Exceptions\XeroApiException;
 use App\Services\Xero\XeroAuthService;
 use Illuminate\Http\Client\ConnectionException;

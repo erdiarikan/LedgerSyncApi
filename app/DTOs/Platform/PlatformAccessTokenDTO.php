@@ -1,11 +1,11 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\Platform;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
 
-class PlatformAccessTokenDTO
+readonly class PlatformAccessTokenDTO
 {
     public ?string $idToken;
     public string $accessToken;

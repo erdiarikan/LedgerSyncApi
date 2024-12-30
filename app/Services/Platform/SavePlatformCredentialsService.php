@@ -2,7 +2,7 @@
 
 namespace App\Services\Platform;
 
-use App\DTOs\PlatformAccessTokenDTO;
+use App\DTOs\Platform\PlatformAccessTokenDTO;
 use App\Enums\PlatformsEnum;
 use App\Models\PlatformCredential;
 use Carbon\Carbon;
@@ -14,7 +14,7 @@ class SavePlatformCredentialsService
         PlatformsEnum $platformEnum
     ): PlatformCredential {
         return PlatformCredential::create([
-            'platform_id' => $platformEnum,
+            'platform_id' => $platformEnum->getPlatformId(),
             'id_token' => encrypt($platformAccessToken->idToken),
             'access_token' => $platformAccessToken->accessToken,
 //            'access_token' => encrypt($platformAccessToken->accessToken),

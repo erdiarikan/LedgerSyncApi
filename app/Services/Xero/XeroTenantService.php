@@ -2,30 +2,25 @@
 
 namespace App\Services\Xero;
 
-use App\DTOs\PlatformTenantDTO;
-use PlatformApiResponseDTO;
+use App\DTOs\Platform\PlatformApiResponseDTO;
+use App\DTOs\Platform\PlatformTenantDTO;
+use App\Enums\XeroEndpointsEnum;
 
-class XeroTenantService
+readonly class XeroTenantService
 {
-    private string $baseUrl;
-
     public function __construct(
-        private readonly XeroApiClientService $apiClient
+        private XeroApiClientService $xeroApiClient
     ) {
-        $this->baseUrl = config('xero.api_base_url');
     }
 
 
-    public function fetchOrganisations(string $accessToken): PlatformApiResponseDTO
+    public function fetchTenants(string $accessToken): PlatformApiResponseDTO
     {
-        $response = $this->apiClient->call(
+        $response = $this->xeroApiClient->call(
             'get',
-            "$this->baseUrl/connections",
+            XeroEndpointsEnum::CONNECTIONS->value,
             [
-                'headers' => [
-                    'Authorization' => "Bearer $accessToken",
-                    'Accept' => 'application/json',
-                ],
+                'Authorization' => "Bearer $accessToken",
             ]
         );
 
@@ -33,7 +28,7 @@ class XeroTenantService
             return $response;
         }
 
-        $organisations = array_map(
+        $tenants = array_map(
             fn($org) => new PlatformTenantDTO($org),
             $response->data
         );
@@ -41,7 +36,37 @@ class XeroTenantService
         return new PlatformApiResponseDTO(
             rateLimitExceeded: false,
             retryAt: null,
-            data: $organisations
+            data: $tenants
+        );
+    }
+
+    /**
+     * TODO: Implement fetchOrganisation method
+    */
+    public function fetchOrganisation(string $accessToken): PlatformApiResponseDTO
+    {
+        $response = $this->xeroApiClient->call(
+            'get',
+            "/organisation",
+            [
+                'Authorization' => "Bearer $accessToken",
+                'Accept' => 'application/json',
+            ]
+        );
+
+        if ($response->isRateLimitExceeded()) {
+            return $response;
+        }
+
+        $tenants = array_map(
+            fn($org) => new PlatformTenantDTO($org),
+            $response->data
+        );
+
+        return new PlatformApiResponseDTO(
+            rateLimitExceeded: false,
+            retryAt: null,
+            data: $tenants
         );
     }
 }

@@ -25,20 +25,6 @@ class XeroFetchOrganisationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $checkRateLimits = $this->checkRateLimits(
-            $this->platformTenant,
-            $this->platformTenant->platform->rateLimit
-        );
-        $remainingCallLimit = Cache::remember(
-            $this->platformTenant->id . '_xero_remaining_call_limit',
-            now()->addDay(),
-            function () {
-                return config('xero.max_calls_per_day');
-            }
-        );
 
-        if ($remainingCallLimit <= 0) {
-            return;
-        }
     }
 }

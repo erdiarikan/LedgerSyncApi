@@ -2,25 +2,28 @@
 
 namespace App\Services\Xero;
 
+use App\DTOs\Platform\PlatformApiResponseDTO;
 use App\Enums\PlatformsEnum;
 use App\Models\PlatformTenant;
 use App\Services\Platform\PlatformApiRateLimiterService;
 use Carbon\Carbon;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use PlatformApiResponseDTO;
 
-class XeroApiClientService
+readonly class XeroApiClientService
 {
     public function __construct(
-        protected Http $apiClient,
-        private readonly PlatformTenant $platformTenant,
-        private readonly PlatformApiRateLimiterService $rateLimiterService
+        private ?PlatformTenant $platformTenant,
+        private PlatformApiRateLimiterService $rateLimiterService
     ) {
     }
 
-    public function call(string $method, string $endpoint, array $options = []): PlatformApiResponseDTO
-    {
+    public function call(
+        string $method,
+        string $endpoint,
+        array $headers = [],
+        array $options = []
+    ): PlatformApiResponseDTO {
         $rateLimit = $this->checkRateLimit();
         if ($rateLimit) {
             return new PlatformApiResponseDTO(
@@ -29,9 +32,9 @@ class XeroApiClientService
             );
         }
 
-        $url = PlatformsEnum::XERO->apiBaseUrl() . $endpoint;
+        $url = config('platforms.xero.base_url') . $endpoint;
 
-        $response = $this->apiClient->$method($url, $options);
+        $response = Http::withHeaders($headers)->$method($url, $options);
 
         if ($response->status() === 429) {
             $this->handleRateLimitExceeded($response);
@@ -42,7 +45,11 @@ class XeroApiClientService
             );
         }
 
-        return $response;
+        return new PlatformApiResponseDTO(
+            rateLimitExceeded: false,
+            retryAt: null,
+            data: $response->json()
+        );
     }
 
     private function checkRateLimit(): ?array

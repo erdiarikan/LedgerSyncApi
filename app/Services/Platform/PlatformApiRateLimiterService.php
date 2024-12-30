@@ -25,9 +25,10 @@ readonly class PlatformApiRateLimiterService
         );
     }
 
-    public function getRateLimit(PlatformTenant $platformTenant): ?array
+    public function getRateLimit(?PlatformTenant $platformTenant): ?array
     {
-        if (!Cache::has($this->getCacheKey($platformTenant, CacheKeySuffixesEnum::RATE_LIMIT_EXCEEDED->value))) {
+        if (!$platformTenant ||
+            !Cache::has($this->getCacheKey($platformTenant, CacheKeySuffixesEnum::RATE_LIMIT_EXCEEDED->value))) {
             return null;
         }
 

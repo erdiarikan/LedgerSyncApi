@@ -3,6 +3,7 @@
 namespace App\Services\Platform;
 
 use App\Contracts\Platform\AssignPlatformTenantToCompanyService;
+use App\DTOs\Platform\PlatformTenantDTO;
 use App\Models\Company;
 use App\Models\PlatformCredential;
 use Illuminate\Http\JsonResponse;
@@ -46,7 +47,7 @@ readonly class AssignTenantToCompanyService implements AssignPlatformTenantToCom
     }
 
     private function processSingleTenant(
-        $platformTenantData,
+        PlatformTenantDTO $platformTenantData,
         Company $company,
         PlatformCredential $platformCredential
     ): array {

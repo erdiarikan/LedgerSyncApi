@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class XeroCallbackRequest extends FormRequest
+class PlatformOauth2CallbackRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +23,7 @@ class XeroCallbackRequest extends FormRequest
     {
         return [
             'code' => 'required|string',
+            'platform' => 'required|string',
             'state' => 'nullable|string',
         ];
     }
@@ -31,6 +32,7 @@ class XeroCallbackRequest extends FormRequest
     {
         return [
             'code.required' => 'The code parameter is required.',
+            'platform.required' => 'The platform parameter is required.',
             'code.string' => 'The code parameter must be a string.',
         ];
     }

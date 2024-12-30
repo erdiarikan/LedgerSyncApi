@@ -1,13 +1,15 @@
 <?php
 
+namespace App\DTOs\Platform;
+
 use Carbon\Carbon;
 
-class PlatformApiResponseDTO
+readonly class PlatformApiResponseDTO
 {
     public function __construct(
-        public readonly bool $rateLimitExceeded,
-        public readonly ?Carbon $retryAt,
-        public readonly mixed $data = null
+        public bool $rateLimitExceeded,
+        public ?Carbon $retryAt,
+        public mixed $data = null
     ) {
     }
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\Platform;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
 
-class PlatformTenantDTO
+readonly class PlatformTenantDTO
 {
     public ?string $authEventId;
     public string $tenantId;

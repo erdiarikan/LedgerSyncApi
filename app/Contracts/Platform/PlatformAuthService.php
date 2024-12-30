@@ -2,7 +2,7 @@
 
 namespace App\Contracts\Platform;
 
-use App\DTOs\PlatformAccessTokenDTO;
+use App\DTOs\Platform\PlatformAccessTokenDTO;
 
 interface PlatformAuthService
 {

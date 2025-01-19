@@ -1,22 +1,20 @@
 <?php
 
-namespace App\Jobs\Xero;
+namespace App\Jobs\Platform;
 
 use App\Models\PlatformTenant;
-use App\Traits\CachesPlatformApiRateLimits;
-use Cache;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class XeroFetchOrganisationJob implements ShouldQueue
+class PlatformFetchContactsJob implements ShouldQueue
 {
-    use Queueable, CachesPlatformApiRateLimits;
+    use Queueable;
 
     /**
      * Create a new job instance.
      */
     public function __construct(
-        private readonly PlatformTenant $platformTenant
+        private PlatformTenant $platformTenant
     ) {
     }
 

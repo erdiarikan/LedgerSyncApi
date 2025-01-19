@@ -12,7 +12,8 @@ readonly class AssignTenantToCompanyService implements AssignPlatformTenantToCom
 {
     public function __construct(
         private SavePlatformTenantService $platformTenantService,
-    ) {
+    )
+    {
     }
 
     public function assignTenantToCompany(
